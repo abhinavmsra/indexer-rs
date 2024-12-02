@@ -23,6 +23,7 @@ jobs:
       PGPASSWORD: ""
       PGDATABASE: app_test
       PGAPPNAME: app
+      CARGO_HOME: '/home/runner/.cargo'
     permissions:
       contents: read
       actions: write
@@ -42,6 +43,12 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.CARGO_HOME }}/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: ⚙️ Set up environment
         uses: ./.github/actions/setup
