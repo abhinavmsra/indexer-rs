@@ -23,6 +23,7 @@ jobs:
       PGAPPNAME: app
       POSTGRES_HOST_AUTH_METHOD: trust
       DATABASE_URL: 'postgres://app@localhost:5432/app_test'
+      CARGO_HOME: '/home/runner/.cargo'
     permissions:
       contents: read
       actions: write
@@ -42,6 +43,12 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.CARGO_HOME }}/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install sqlx-cli
         uses: actions-rs/cargo@v1
