@@ -1,3 +1,18 @@
+## 0.0.2 (2024-12-02)
+
+### 🩹 Fixes
+
+- add caching in main GH workflow ([f89c47c](https://github.com/abhinavmsra/indexer-rs/commit/f89c47c))
+- cache sqlx install ([e8d2342](https://github.com/abhinavmsra/indexer-rs/commit/e8d2342))
+- install sqlx ([8b193a9](https://github.com/abhinavmsra/indexer-rs/commit/8b193a9))
+- cancel in progress GH workflow ([29faba6](https://github.com/abhinavmsra/indexer-rs/commit/29faba6))
+- add migrations to create db user ([a045638](https://github.com/abhinavmsra/indexer-rs/commit/a045638))
+- add sqlx ([f7338b4](https://github.com/abhinavmsra/indexer-rs/commit/f7338b4))
+
+### ❤️ Thank You
+
+- Abhinav Mishra @abhinavmsra
+
 ## 0.0.1 (2024-12-02)
 
 ### 🩹 Fixes
