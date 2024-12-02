@@ -1,0 +1,19 @@
+{
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "name": "indexer-db",
+  "projectType": "library",
+  "metadata": {
+    "description": "Library for indexer db interfaces"
+  },
+  "targets": {
+    "lint": {
+      "command": "cargo fmt --check && cargo clippy"
+    },
+    "build": {
+      "command": "cargo build"
+    },
+    "test": {
+      "command": "cargo test"
+    }
+  }
+}

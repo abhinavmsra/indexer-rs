@@ -1,0 +1,11 @@
+[workspace]
+resolver = '2'
+members = [
+	"libs/indexer-db"
+]
+
+[workspace.dependencies]
+
+
+[profile.release]
+lto = true

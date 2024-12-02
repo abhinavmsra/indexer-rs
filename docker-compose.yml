@@ -1,0 +1,24 @@
+services:
+  dev:
+    build:
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - ./:/app
+    env_file:
+      - path: .env
+        required: true
+    ports:
+      - 127.0.0.1:3010:3010 # NX graph
+    command: tail -f /dev/null
+
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_DB: indexer_development
+      POSTGRES_HOST_AUTH_METHOD: trust
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data

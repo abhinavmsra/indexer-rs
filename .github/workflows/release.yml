@@ -1,0 +1,49 @@
+---
+  name: 🚀 Release
+
+  on:
+    pull_request:
+      types:
+        - closed
+      branches:
+        - main
+
+  jobs:
+    prepare:
+      runs-on: ubuntu-latest
+      if: |
+        github.event.pull_request.merged == true &&
+        !contains(github.event.pull_request.title, '[skip ci]') &&
+        !startsWith(github.event.pull_request.title, 'chore(release)')
+      steps:
+        - name: 🛑 Skip Build Workflow
+          run: |
+            echo "PR Title: ${{ github.event.pull_request.title }}"
+            echo "[skip ci]: ${{ contains(github.event.pull_request.title, '[skip ci]') }}"
+            echo "[chore(release)]: ${{ startsWith(github.event.pull_request.title, 'chore(release)') }}"
+
+    release:
+      needs: prepare
+      name: release
+      runs-on: ubuntu-latest
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      steps:
+        - name: 📥 Checkout Code
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+            persist-credentials: false
+
+        - name: ⚙️ Set up environment
+          uses: ./.github/actions/setup
+
+        - name: 📝 Configure CI Git User
+          run: |
+            git remote set-url origin https://${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
+            git config --global user.email hey@abhi.dev
+            git config --global user.name Abhinav Mishra
+
+        - name: 🔖 Nx bump version
+          run: |
+            nx release --verbose --skip-publish
