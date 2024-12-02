@@ -1,0 +1,44 @@
+name: Test SQL Migrations
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'libs/indexer-db/migrations/**'
+
+jobs:
+  migrations:
+    runs-on: ubuntu-latest
+    env:
+      PGHOST: localhost
+      PGPORT: 5432
+      POSTGRES_USER: app
+      PGPASSWORD: ""
+      POSTGRES_DB: app_test
+      PGAPPNAME: app
+      POSTGRES_HOST_AUTH_METHOD: trust
+      DATABASE_URL: 'postgres://app@localhost:5432/app_test'
+    permissions:
+      contents: read
+      actions: write
+      pull-requests: write
+    services:
+      postgres:
+        image: postgres:12
+        ports: ["5432:5432"]
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_USER: app
+          POSTGRES_DB: app_test
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Run Migrations
+        run: |
+          sqlx database reset --source ./libs/indexer-db/migrations
