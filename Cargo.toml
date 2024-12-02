@@ -1,11 +1,11 @@
 [workspace]
 resolver = '2'
 members = [
-	"libs/indexer-db"
+	'libs/indexer-db'
 ]
 
 [workspace.dependencies]
-
+sqlx = { version = '0.8', features = [ 'bigdecimal', 'chrono', 'postgres', 'runtime-tokio', 'tls-native-tls' ] }
 
 [profile.release]
 lto = true

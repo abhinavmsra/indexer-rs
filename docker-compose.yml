@@ -8,6 +8,8 @@ services:
     env_file:
       - path: .env
         required: true
+    environment:
+      - DATABASE_URL=postgres://app@db/indexer_development
     ports:
       - 127.0.0.1:3010:3010 # NX graph
     command: tail -f /dev/null
