@@ -16,3 +16,9 @@ pgdata
 # pnpm
 .pnpm-store/
 node_modules
+
+# credentials
+.env
+
+# NX
+.nx/

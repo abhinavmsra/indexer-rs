@@ -1,0 +1,46 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "namedInputs": {
+    "default": [
+      "{projectRoot}/**/*",
+      "sharedGlobals"
+    ],
+    "production": [
+      "default"
+    ],
+    "sharedGlobals": []
+  },
+  "plugins": [
+    "@monodon/rust"
+  ],
+  "release": {
+    "projects": ["libs/indexer-db"],
+    "projectsRelationship": "independent",
+    "changelog": {
+      "projectChangelogs": {
+        "renderOptions": {
+          "authors": true,
+          "mapAuthorsToGitHubUsernames": true,
+          "commitReferences": true,
+          "versionTitleDate": true
+        },
+        "createRelease": "github"
+      }
+    },
+    "conventionalCommits": {
+      "types": {
+        "chore": {
+          "semverBump": "none"
+        },
+        "docs": {
+          "semverBump": "none"
+        }
+      }
+    },
+    "version": {
+      "conventionalCommits": true,
+      "generator": "@monodon/rust:release-version"
+    }
+  },
+  "defaultBase": "main"
+}

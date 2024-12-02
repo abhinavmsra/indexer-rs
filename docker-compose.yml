@@ -8,6 +8,8 @@ services:
     env_file:
       - path: .env
         required: true
+    ports:
+      - 127.0.0.1:3010:3010 # NX graph
     command: tail -f /dev/null
 
   db:
