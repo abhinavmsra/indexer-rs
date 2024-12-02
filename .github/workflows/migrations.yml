@@ -43,6 +43,12 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      - name: Install sqlx-cli
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: sqlx-cli --no-default-features --features native-tls,postgres
+
       - name: Run Migrations
         run: |
           sqlx database reset --source ./libs/indexer-db/migrations
