@@ -1,0 +1,27 @@
+name: Setup
+description: Common environment setup
+
+runs:
+  using: composite
+  steps:
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 9.7.x
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'pnpm'
+
+    - name: Install Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+
+    - name: Install dependencies
+      run: pnpm install
+      shell: bash
+
+    - name: Install Nx
+      run: pnpm add --global nx@latest
+      shell: bash

@@ -1,0 +1,91 @@
+name: 🛠️ CI Pipeline
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  ci:
+    name: 🔮 CI Pipeline
+    runs-on: ubuntu-latest
+    env:
+      RUSTFLAGS: "-Cinstrument-coverage"
+      CARGO_TARGET_DIR: ./target
+      DATABASE_MAX_CONNECTIONS: "5"
+      PGHOST: localhost
+      PGPORT: 5432
+      PGUSER: app
+      PGPASSWORD: ""
+      PGDATABASE: app_test
+      PGAPPNAME: app
+    permissions:
+      contents: read
+      actions: write
+      pull-requests: write
+    services:
+      postgres:
+        image: postgres:12
+        ports: ["5432:5432"]
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_USER: app
+          POSTGRES_DB: app_test
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: ⚙️ Set up environment
+        uses: ./.github/actions/setup
+
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@v4
+
+      - name: 📦 Install lcov
+        run: |
+          sudo apt-get update -y
+          sudo apt-get -y install lcov
+
+      - name: 🛠️ Install Rust Components
+        run: |
+          rustup component add rustfmt llvm-tools-preview
+
+      - name: 📦 Install grcov
+        run: |
+          curl -sL https://github.com/mozilla/grcov/releases/download/v0.8.19/grcov-x86_64-unknown-linux-gnu.tar.bz2 | tar jxf - -C /usr/local/bin/
+
+      - name: 🔍 Lint the Codebase
+        run: |
+          nx affected -t lint --verbose
+
+      - name: 🏗️ Build Project
+        run: |
+          nx affected -t build --verbose
+
+      - name: 🧪 Run Unit Tests
+        run: |
+          nx affected -t test --verbose
+
+      - name: 🗂️ Check if build directory exists
+        id: build
+        run: |
+          if [ -d "./target/debug" ]; then echo "build_dir_exists=true" >> $GITHUB_ENV; else echo "build_dir_exists=false" >> $GITHUB_ENV; fi
+
+      - name: 📊 Generate Coverage Report
+        if: env.build_dir_exists == 'true'
+        run: |
+          mkdir coverage
+          grcov . -s . --binary-path ./target/debug/ -t lcov --branch --ignore-not-existing --log-level DEBUG --ignore "/*"  -o ./coverage/lcov.info
+          echo "coverage_generated=true" >> $GITHUB_ENV
+
+      - name: 📝 Report Code Coverage
+        uses: zgosalvez/github-actions-report-lcov@v3
+        if: env.coverage_generated == 'true'
+        with:
+          coverage-files: ./coverage/*.info
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          update-comment: true
