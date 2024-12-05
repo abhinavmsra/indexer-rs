@@ -6,7 +6,9 @@ members = [
 ]
 
 [workspace.dependencies]
+alloy = { version = "0.7.2", features = ["full"] }
 sqlx = { version = "0.8", features = [ "bigdecimal", "chrono", "postgres", "runtime-tokio", "tls-native-tls" ] }
+tokio = { version = "1.41.1", features = ["full"] }
 
 [profile.release]
 lto = true
