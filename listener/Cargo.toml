@@ -1,0 +1,12 @@
+[package]
+name = "listener"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+alloy = { workspace = true }
+tokio = { workspace = true }
+
+indexer-db = { path = '../libs/indexer-db', version = '0.0.2' }
+tower = { version = "0.5.1", features = ["limit", "util"] }
+sqlx = { workspace = true }
