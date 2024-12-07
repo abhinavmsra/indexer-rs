@@ -14,7 +14,7 @@
     "@monodon/rust"
   ],
   "release": {
-    "projects": ["libs/indexer-db", "listener"],
+    "projects": ["libs/indexer-db", "listener", "processor"],
     "projectsRelationship": "independent",
     "changelog": {
       "projectChangelogs": {
