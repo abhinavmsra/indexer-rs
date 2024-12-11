@@ -1,0 +1,19 @@
+{
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "name": "listener",
+  "projectType": "application",
+  "metadata": {
+    "description": "Listens EVM events & saves the data in database for processing"
+  },
+  "targets": {
+    "lint": {
+      "command": "cargo fmt --check && cargo clippy"
+    },
+    "build": {
+      "command": "cargo build"
+    },
+    "test": {
+      "command": "cargo test"
+    }
+  }
+}
