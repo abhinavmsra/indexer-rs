@@ -9,7 +9,21 @@
 			"extensions": [
 				"rust-lang.rust-analyzer",
 				"ms-azuretools.vscode-docker"
-			]
+			],
+			"settings": {
+				"terminal.integrated.defaultProfile.linux": "bash",
+				"terminal.integrated.profiles.linux": {
+					"bash": {
+						"path": "bash",
+						"icon": "terminal-bash"
+					},
+					"psql": {
+						"path": "bash",
+						"args": ["-c", "psql -U app -h db"],
+						"icon": "database"
+					}
+				}
+			}
 		}
 	}
 }

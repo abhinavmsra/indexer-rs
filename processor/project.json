@@ -1,0 +1,19 @@
+{
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "name": "processor",
+  "projectType": "application",
+  "metadata": {
+    "description": "Provides interfaces to process evm logs"
+  },
+  "targets": {
+    "lint": {
+      "command": "cargo fmt --check && cargo clippy"
+    },
+    "build": {
+      "command": "cargo build"
+    },
+    "test": {
+      "command": "cargo test"
+    }
+  }
+}
