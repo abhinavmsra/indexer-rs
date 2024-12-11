@@ -8,11 +8,11 @@ use sqlx::{
 pub struct EvmLogs {
     pub id: i32,
     pub block_number: BigDecimal,
-    pub address: Vec<u8>,
-    pub transaction_hash: Vec<u8>,
+    pub address: [u8; 20],
+    pub transaction_hash: [u8; 32],
     pub data: Vec<u8>,
-    pub event_signature: Vec<u8>,
-    pub topics: Vec<Vec<u8>>,
+    pub event_signature: [u8; 32],
+    pub topics: Vec<[u8; 32]>,
     pub created_at: chrono::NaiveDateTime,
 }
 
@@ -36,7 +36,8 @@ impl EvmLogs {
 
         let event_signature: &[u8] = log.topics()[0].as_slice();
 
-        let topics: Vec<&[u8]> = log.topics()[1..]
+        let topics: Vec<&[u8]> = log
+            .topics()
             .iter()
             .map(|topic| -> &[u8] { topic.as_slice() })
             .collect();
@@ -58,6 +59,15 @@ impl EvmLogs {
             .bind(topics)
             .bind(log_data)
             .fetch_one(connection)
+            .await
+    }
+
+    pub async fn find_all<'c, E>(connection: E) -> Result<Vec<EvmLogs>, sqlx::Error>
+    where
+        E: Executor<'c, Database = Postgres>,
+    {
+        sqlx::query_as::<_, EvmLogs>("SELECT * FROM evm_logs")
+            .fetch_all(connection)
             .await
     }
 }
