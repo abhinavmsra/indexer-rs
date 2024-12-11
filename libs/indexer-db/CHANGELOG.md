@@ -1,3 +1,13 @@
+## 0.0.5 (2024-12-11)
+
+### 🩹 Fixes
+
+- add missing columns & fix inserts ([3c48682](https://github.com/abhinavmsra/indexer-rs/commit/3c48682))
+
+### ❤️ Thank You
+
+- Abhinav Mishra @abhinavmsra
+
 ## 0.0.4 (2024-12-11)
 
 ### 🩹 Fixes
