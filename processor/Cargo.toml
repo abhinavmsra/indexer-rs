@@ -1,12 +1,13 @@
+
 [package]
-name = "processor"
-version = "0.0.0"
-edition = "2021"
+name = 'processor'
+version = '0.0.1'
+edition = '2021'
 
 [dependencies]
-Inflector = "0.11.4"
+Inflector = '0.11.4'
 alloy = { workspace = true }
-indexer-db = { path = '../libs/indexer-db', version = '0.0.3' }
-serde = "1.0.215"
-serde_json = "1.0.133"
+indexer-db = { path = '../libs/indexer-db', version = '0.0.4' }
+serde = '1.0.215'
+serde_json = '1.0.133'
 tokio = { workspace = true }

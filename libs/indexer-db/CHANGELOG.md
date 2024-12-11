@@ -1,3 +1,14 @@
+## 0.0.4 (2024-12-11)
+
+### 🩹 Fixes
+
+- process evm logs ([3a735cf](https://github.com/abhinavmsra/indexer-rs/commit/3a735cf))
+- create processor service ([26c85b6](https://github.com/abhinavmsra/indexer-rs/commit/26c85b6))
+
+### ❤️ Thank You
+
+- Abhinav Mishra @abhinavmsra
+
 ## 0.0.3 (2024-12-07)
 
 ### 🩹 Fixes
