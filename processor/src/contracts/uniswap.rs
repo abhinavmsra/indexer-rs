@@ -24,11 +24,11 @@ impl ContractHandler for UniswapV3Factory {
     }
 
     // Map event to handlers here
-    fn handle_event(&self, event: &str, log: &Log) {
+    async fn handle_event(&self, event: &str, log: &Log) {
         match event {
-            "PoolCreated" => self.pool_created_handler(log),
-            "OwnerChanged" => self.owner_changed_handler(log),
-            "FeeAmountEnabled" => self.fee_amount_enabled_handler(log),
+            "PoolCreated" => self.pool_created_handler(log).await,
+            "OwnerChanged" => self.owner_changed_handler(log).await,
+            "FeeAmountEnabled" => self.fee_amount_enabled_handler(log).await,
             unsupported => eprintln!("Unsupported event, {}", unsupported),
         }
     }
@@ -36,15 +36,15 @@ impl ContractHandler for UniswapV3Factory {
 
 // Implement Handlers here
 impl UniswapV3Factory {
-    fn pool_created_handler(&self, _log: &Log) {
-        // println!("pool_created_handler called");
+    async fn pool_created_handler(&self, _log: &Log) {
+        println!("pool_created_handler called");
     }
 
-    fn owner_changed_handler(&self, _log: &Log) {
-        // println!("owner_changed_handler called");
+    async fn owner_changed_handler(&self, _log: &Log) {
+        println!("owner_changed_handler called");
     }
 
-    fn fee_amount_enabled_handler(&self, _log: &Log) {
-        // println!("owner_changed_handler called");
+    async fn fee_amount_enabled_handler(&self, _log: &Log) {
+        println!("owner_changed_handler called");
     }
 }

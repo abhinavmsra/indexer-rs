@@ -38,41 +38,46 @@ pub trait ContractHandler {
         event_name.to_string()
     }
 
-    fn process(&self, unprocessed_log: EvmLogs) {
-        let event_name = self.event_signature_to_name(unprocessed_log.event_signature);
+    fn process(&self, unprocessed_log: EvmLogs) -> impl std::future::Future<Output = ()> + Send
+    where
+        Self: Sync,
+    {
+        async move {
+            let event_name = self.event_signature_to_name(unprocessed_log.event_signature);
 
-        let topics: Vec<FixedBytes<32>> = unprocessed_log
-            .topics
-            .iter()
-            .map(FixedBytes::<32>::from)
-            .collect();
+            let topics: Vec<FixedBytes<32>> = unprocessed_log
+                .topics
+                .iter()
+                .map(FixedBytes::<32>::from)
+                .collect();
 
-        let data = Bytes::from(unprocessed_log.data);
-        let contract_address = Address::from(unprocessed_log.address);
-        let block_number = unprocessed_log
-            .block_number
-            .to_string()
-            .parse::<u64>()
-            .unwrap();
-        let transaction_hash = FixedBytes::<32>::from(unprocessed_log.transaction_hash);
+            let data = Bytes::from(unprocessed_log.data);
+            let contract_address = Address::from(unprocessed_log.address);
+            let block_number = unprocessed_log
+                .block_number
+                .to_string()
+                .parse::<u64>()
+                .unwrap();
+            let transaction_hash = FixedBytes::<32>::from(unprocessed_log.transaction_hash);
 
-        let log_data = alloy::primitives::Log::new(contract_address, topics, data).unwrap();
+            let log_data = alloy::primitives::Log::new(contract_address, topics, data).unwrap();
 
-        let log = Log {
-            inner: log_data,
-            block_number: Some(block_number),
-            block_hash: None,
-            block_timestamp: None,
-            transaction_hash: Some(transaction_hash),
-            transaction_index: None,
-            log_index: None,
-            removed: false,
-        };
+            let log = Log {
+                inner: log_data,
+                block_number: Some(block_number),
+                block_hash: None,
+                block_timestamp: None,
+                transaction_hash: Some(transaction_hash),
+                transaction_index: None,
+                log_index: None,
+                removed: false,
+            };
 
-        self.handle_event(&event_name, &log);
+            self.handle_event(&event_name, &log).await;
+        }
     }
 
     fn new(address: &str) -> Self;
-    fn handle_event(&self, event: &str, log: &Log);
+    fn handle_event(&self, event: &str, log: &Log) -> impl std::future::Future<Output = ()> + Send;
     fn abi(&self) -> &JsonAbi;
 }

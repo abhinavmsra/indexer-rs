@@ -14,7 +14,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let unprocessed_logs = EvmLogs::find_all(&db_pool).await?;
 
     for log in unprocessed_logs {
-        contract_registry.get_processor(log.address).process(log);
+        contract_registry
+            .get_processor(log.address)
+            .process(log)
+            .await;
     }
 
     Ok(())
