@@ -1,3 +1,18 @@
+## 0.0.2 (2024-12-12)
+
+### 🩹 Fixes
+
+- create contract registry to better handle contract name & address mapping ([0745202](https://github.com/abhinavmsra/indexer-rs/commit/0745202))
+
+### 🏡 Chore
+
+- **release:** publish ([882bfc3](https://github.com/abhinavmsra/indexer-rs/commit/882bfc3))
+
+### ❤️ Thank You
+
+- Abhinav @abhinavmsra
+- Abhinav Mishra @abhinavmsra
+
 ## 0.0.1 (2024-12-11)
 
 ### 🩹 Fixes
