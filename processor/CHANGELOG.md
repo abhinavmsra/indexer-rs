@@ -1,3 +1,13 @@
+## 0.0.4 (2024-12-12)
+
+### 🩹 Fixes
+
+- make processor calls async ([8a0aaba](https://github.com/abhinavmsra/indexer-rs/commit/8a0aaba))
+
+### ❤️ Thank You
+
+- Abhinav Mishra @abhinavmsra
+
 ## 0.0.3 (2024-12-12)
 
 ### 🩹 Fixes
