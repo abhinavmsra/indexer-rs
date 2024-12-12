@@ -10,7 +10,7 @@
       "command": "cargo fmt --check && cargo clippy"
     },
     "build": {
-      "command": "cargo build"
+      "command": "cargo build --lib"
     },
     "test": {
       "command": "cargo test"
