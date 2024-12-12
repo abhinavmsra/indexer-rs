@@ -8,6 +8,8 @@ members = [
 
 [workspace.dependencies]
 alloy = { version = "0.7.2", features = ["full"] }
+serde = '1.0.215'
+serde_json = '1.0.133'
 sqlx = { version = "0.8", features = [ "bigdecimal", "chrono", "postgres", "runtime-tokio", "tls-native-tls" ] }
 tokio = { version = "1.41.1", features = ["full"] }
 
