@@ -1,12 +1,12 @@
 
 [package]
 name = 'processor'
-version = '0.0.2'
+version = '0.0.3'
 edition = '2021'
 
 [dependencies]
 alloy = { workspace = true }
-indexer-db = { path = '../libs/indexer-db', version = '0.0.5' }
+indexer-db = { path = '../libs/indexer-db', version = '0.0.6' }
 serde = { workspace = true }
 serde_json = { workspace = true }
 tokio = { workspace = true }

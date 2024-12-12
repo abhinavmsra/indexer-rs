@@ -1,3 +1,19 @@
+## 0.0.3 (2024-12-12)
+
+### 🩹 Fixes
+
+- cleanup crates ([d707a0c](https://github.com/abhinavmsra/indexer-rs/commit/d707a0c))
+- add Cargo.lock in git ([d35606a](https://github.com/abhinavmsra/indexer-rs/commit/d35606a))
+- update build command for CI ([3618d14](https://github.com/abhinavmsra/indexer-rs/commit/3618d14))
+
+### 🧱 Updated Dependencies
+
+- Updated indexer-db to 0.0.6
+
+### ❤️ Thank You
+
+- Abhinav Mishra @abhinavmsra
+
 ## 0.0.2 (2024-12-12)
 
 ### 🩹 Fixes
