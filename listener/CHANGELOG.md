@@ -1,3 +1,22 @@
+## 0.0.4 (2024-12-13)
+
+### 🩹 Fixes
+
+- replace unwraps with error handling ([8a1310e](https://github.com/abhinavmsra/indexer-rs/commit/8a1310e))
+
+### 🏡 Chore
+
+- **release:** publish ([8da8a4c](https://github.com/abhinavmsra/indexer-rs/commit/8da8a4c))
+
+### 🧱 Updated Dependencies
+
+- Updated indexer-db to 0.0.7
+
+### ❤️ Thank You
+
+- Abhinav @abhinavmsra
+- Abhinav Mishra @abhinavmsra
+
 ## 0.0.3 (2024-12-12)
 
 ### 🩹 Fixes
