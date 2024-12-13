@@ -74,11 +74,10 @@ impl EvmLogs {
             .ok_or_else(|| sqlx::Error::Decode("Missing block hash".into()))?
             .to_vec();
 
-        let block_number: BigDecimal = log
-            .block_number
-            .ok_or_else(|| sqlx::Error::Decode("Missing block number".into()))?
-            .try_into()
-            .map_err(|_| sqlx::Error::Decode("Block number exceeds BigDecimal range".into()))?;
+        let block_number: BigDecimal = <u64 as Into<BigDecimal>>::into(
+            log.block_number
+                .ok_or_else(|| sqlx::Error::Decode("Missing block number".into()))?,
+        );
 
         let transaction_index: i64 = log
             .transaction_index

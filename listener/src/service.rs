@@ -1,7 +1,9 @@
 use std::{
+    env,
     error::Error,
     future::Future,
     pin::Pin,
+    str::FromStr,
     task::{Context, Poll},
 };
 
@@ -11,14 +13,15 @@ use alloy::{
     providers::{Provider, ProviderBuilder},
     rpc::types::Filter,
 };
-use indexer_db::entity::{evm_chains::EvmChains, evm_logs::EvmLogs};
+use indexer_db::entity::{evm_logs::EvmLogs, evm_sync_logs::EvmSyncLogs};
 use sqlx::{Pool, Postgres};
 use tower::Service;
 
+use crate::error::AppError;
+
 pub struct ListenerService {
     pub chain_id: u64,
-    pub rpc_url: String,
-    pub addresses: Vec<Address>,
+    pub address: String,
     pub db_pool: Pool<Postgres>,
 }
 
@@ -34,39 +37,40 @@ impl Service<()> for ListenerService {
     fn call(&mut self, _: ()) -> Self::Future {
         let db_pool = self.db_pool.clone();
         let chain_id = self.chain_id;
-        let rpc_url = self.rpc_url.clone();
-        let addresses = self.addresses.clone();
+        let address = self.address.clone();
 
-        Box::pin(async move { fetch_and_save_logs(chain_id, rpc_url, db_pool, addresses).await })
+        Box::pin(async move { fetch_and_save_logs(chain_id, db_pool, address).await })
     }
 }
 
 pub async fn fetch_and_save_logs(
     chain_id: u64,
-    rpc_url: String,
     db_pool: Pool<Postgres>,
-    addresses: Vec<Address>,
+    address: String,
 ) -> Result<(), Box<dyn Error>> {
+    let rpc_url = env::var("RPC_URL").map_err(|_| AppError::MissingEnvVar("RPC_URL".into()))?;
+
     let provider = ProviderBuilder::new().on_builtin(&rpc_url).await?;
-    let evm_chain = EvmChains::fetch_by_id(chain_id, &db_pool).await?;
+    let sync_log = EvmSyncLogs::find_or_create_by_address(&address, chain_id, &db_pool).await?;
+
     let latest_block = provider.get_block_number().await?;
-    if latest_block == evm_chain.last_synced_block_number as u64 {
-        println!("Fully indexed");
+    if latest_block == sync_log.last_synced_block_number as u64 {
+        println!("Fully indexed address: {address}");
         return Ok(());
     }
 
-    let from_block_number = match evm_chain.last_synced_block_number as u64 {
-        0 => 0,
+    let from_block_number = match sync_log.last_synced_block_number as u64 {
+        0 => 0, // FIXME: may start from the first tx block
         block_number => block_number + 1_u64,
     };
 
-    let to_block_number = match evm_chain.last_synced_block_number as u64 {
+    let to_block_number = match sync_log.last_synced_block_number as u64 {
         0 => latest_block,
-        block_number => std::cmp::min(block_number + 25_u64, latest_block),
+        block_number => std::cmp::min(block_number + 10_000_u64, latest_block),
     };
 
     let filter = Filter::new()
-        .address(addresses)
+        .address(Address::from_str(&address)?)
         .from_block(BlockNumberOrTag::Number(from_block_number))
         .to_block(BlockNumberOrTag::Number(to_block_number));
 
@@ -79,13 +83,15 @@ pub async fn fetch_and_save_logs(
             .inspect_err(|error| eprintln!("Error saving log {error}"));
     }
 
-    let _ = evm_chain
+    let _ = sync_log
         .update_last_synced_block_number(to_block_number, &mut *tx)
         .await
         .inspect_err(|error| eprintln!("Error updating last_synced_block_number {error}"));
 
     match tx.commit().await {
-        Ok(_) => println!("Saved logs for blocks: {from_block_number} to {to_block_number}",),
+        Ok(_) => {
+            println!("Saved logs for {address}, blocks: {from_block_number} to {to_block_number}",)
+        }
         Err(err) => eprintln!("{err}"),
     }
 
