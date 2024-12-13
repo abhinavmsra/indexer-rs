@@ -1,8 +1,21 @@
-use alloy::rpc::types::Log;
+use alloy::{
+    primitives::{Address, Bytes, FixedBytes},
+    rpc::types::Log,
+};
 use sqlx::{
     types::{chrono, BigDecimal},
     Executor, Postgres,
 };
+use thiserror::Error;
+
+#[derive(Error, Debug)]
+pub enum EvmLogsError {
+    #[error("Failed to create a valid log data")]
+    InvalidLogData,
+
+    #[error("Invalid block number: `{0}`")]
+    InvalidBlockNumber(String),
+}
 
 #[derive(sqlx::FromRow, Debug)]
 pub struct EvmLogs {
@@ -18,6 +31,37 @@ pub struct EvmLogs {
     pub log_index: i64,
     pub removed: bool,
     pub created_at: chrono::NaiveDateTime,
+}
+
+impl TryInto<Log> for EvmLogs {
+    type Error = EvmLogsError;
+
+    fn try_into(self) -> Result<Log, Self::Error> {
+        let transaction_hash = FixedBytes::<32>::from(self.transaction_hash);
+        let contract_address = Address::from(self.address);
+        let topics: Vec<FixedBytes<32>> = self.topics.iter().map(FixedBytes::<32>::from).collect();
+        let data = Bytes::from(self.data);
+
+        let inner = alloy::primitives::Log::new(contract_address, topics, data)
+            .ok_or(EvmLogsError::InvalidLogData)?;
+
+        let block_number = self
+            .block_number
+            .to_string()
+            .parse::<u64>()
+            .map_err(|_| EvmLogsError::InvalidBlockNumber(self.block_number.to_string()))?;
+
+        Ok(Log {
+            inner,
+            block_number: Some(block_number),
+            block_hash: None,
+            block_timestamp: None,
+            transaction_hash: Some(transaction_hash),
+            transaction_index: None,
+            log_index: None,
+            removed: false,
+        })
+    }
 }
 
 impl EvmLogs {
