@@ -1,27 +1,32 @@
 use std::{env, str::FromStr, time::Duration};
 
 use alloy::primitives::Address;
+use error::AppError;
 use indexer_db::{entity::evm_chains::EvmChains, initialize_database};
 use service::ListenerService;
 use tower::{Service, ServiceBuilder, ServiceExt};
 
+mod error;
 mod service;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let rpc_url = env::var("RPC_URL").expect("Missing RPC_URL environment variable");
-    let chain_id = env::var("CHAIN_ID")
-        .expect("Missing CHAIN_ID environment variable")
+    let rpc_url = env::var("RPC_URL").map_err(|_| AppError::MissingEnvVar("RPC_URL".into()))?;
+
+    let contract_addresses = env::var("CONTRACT_ADDRESSES")
+        .map_err(|_| AppError::MissingEnvVar("CONTRACT_ADDRESSES".into()))?;
+
+    let chain_id_env =
+        env::var("CHAIN_ID").map_err(|_| AppError::MissingEnvVar("CHAIN_ID".into()))?;
+
+    let chain_id = chain_id_env
         .parse::<u64>()
-        .expect("Invalid chain id");
+        .map_err(|_| AppError::InvalidChainID(chain_id_env))?;
 
-    let contract_addresses =
-        env::var("CONTRACT_ADDRESSES").expect("Missing RPC_URL environment variable");
-
-    let addresses_to_listen = contract_addresses.split(",").map(|address_str| {
-        let address = address_str.trim();
-        Address::from_str(address).unwrap_or_else(|_| panic!("Invalid address: {address_str:?}"))
-    });
+    let addresses: Vec<Address> = contract_addresses
+        .split(",")
+        .map(|address_str| Address::from_str(address_str.trim()).unwrap())
+        .collect();
 
     let db_pool = initialize_database().await.unwrap();
 
@@ -33,15 +38,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             chain_id,
             db_pool,
             rpc_url,
-            addresses: addresses_to_listen.collect(),
+            addresses,
         });
 
     loop {
         if service.ready().await.is_ok() {
             match service.call(()).await {
-                Ok(()) => {
-                    println!("Indexed block");
-                }
+                Ok(()) => {}
                 Err(err) => {
                     eprintln!("Failed to indexed: {:?}", err);
                 }

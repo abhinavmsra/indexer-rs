@@ -2129,6 +2129,7 @@ dependencies = [
  "alloy",
  "indexer-db",
  "sqlx",
+ "thiserror 2.0.6",
  "tokio",
  "tower",
 ]
