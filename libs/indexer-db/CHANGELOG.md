@@ -1,3 +1,14 @@
+## 0.0.9 (2024-12-13)
+
+### 🩹 Fixes
+
+- allow multiple contracts to be listened ([b1087c5](https://github.com/abhinavmsra/indexer-rs/commit/b1087c5))
+- create sync logs to store sync metadata for each address ([c4982f2](https://github.com/abhinavmsra/indexer-rs/commit/c4982f2))
+
+### ❤️ Thank You
+
+- Abhinav Mishra @abhinavmsra
+
 ## 0.0.8 (2024-12-13)
 
 ### 🩹 Fixes

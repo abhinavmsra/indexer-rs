@@ -1,3 +1,17 @@
+## 0.0.7 (2024-12-13)
+
+### 🩹 Fixes
+
+- allow multiple contracts to be listened ([b1087c5](https://github.com/abhinavmsra/indexer-rs/commit/b1087c5))
+
+### 🧱 Updated Dependencies
+
+- Updated indexer-db to 0.0.9
+
+### ❤️ Thank You
+
+- Abhinav Mishra @abhinavmsra
+
 ## 0.0.6 (2024-12-13)
 
 ### 🩹 Fixes
