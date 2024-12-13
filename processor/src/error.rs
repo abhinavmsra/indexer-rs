@@ -4,18 +4,6 @@ use indexer_db::entity::evm_logs::EvmLogsError;
 use thiserror::Error;
 
 #[derive(Error, Debug)]
-pub struct GenericError {
-    msg: String,
-    source: dyn std::error::Error,
-}
-
-impl Display for GenericError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.msg)
-    }
-}
-
-#[derive(Error, Debug)]
 pub enum AppError {
     #[error("Missing `{0}` environment variable")]
     MissingEnvVar(String),

@@ -70,28 +70,23 @@ pub async fn fetch_and_save_logs(
         .from_block(BlockNumberOrTag::Number(from_block_number))
         .to_block(BlockNumberOrTag::Number(to_block_number));
 
-    println!(
-        "Fetching blocks from {} to {}",
-        from_block_number, to_block_number
-    );
-
     let logs = provider.get_logs(&filter).await?;
 
     let mut tx = db_pool.begin().await?;
     for log in logs {
-        EvmLogs::create(log, &mut *tx).await.unwrap();
+        let _ = EvmLogs::create(log, &mut *tx)
+            .await
+            .inspect_err(|error| eprintln!("Error saving log {error}"));
     }
 
-    evm_chain
+    let _ = evm_chain
         .update_last_synced_block_number(to_block_number, &mut *tx)
-        .await?;
+        .await
+        .inspect_err(|error| eprintln!("Error updating last_synced_block_number {error}"));
 
     match tx.commit().await {
-        Ok(_) => println!(
-            "Saved logs for blocks: {} to {}",
-            from_block_number, to_block_number
-        ),
-        Err(err) => eprintln!("{}", err),
+        Ok(_) => println!("Saved logs for blocks: {from_block_number} to {to_block_number}",),
+        Err(err) => eprintln!("{err}"),
     }
 
     Ok(())
