@@ -1,3 +1,13 @@
+## 0.0.8 (2024-12-13)
+
+### 🩹 Fixes
+
+- replace unwraps in listener ([523998a](https://github.com/abhinavmsra/indexer-rs/commit/523998a))
+
+### ❤️ Thank You
+
+- Abhinav Mishra @abhinavmsra
+
 ## 0.0.7 (2024-12-13)
 
 ### 🩹 Fixes

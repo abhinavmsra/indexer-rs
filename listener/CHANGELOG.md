@@ -1,3 +1,17 @@
+## 0.0.5 (2024-12-13)
+
+### 🩹 Fixes
+
+- replace unwraps in listener ([523998a](https://github.com/abhinavmsra/indexer-rs/commit/523998a))
+
+### 🧱 Updated Dependencies
+
+- Updated indexer-db to 0.0.8
+
+### ❤️ Thank You
+
+- Abhinav Mishra @abhinavmsra
+
 ## 0.0.4 (2024-12-13)
 
 ### 🩹 Fixes
