@@ -1,30 +1,57 @@
 use contracts::contract_handler::ContractHandler;
-use contracts::ContractRegistry;
 use indexer_db::{entity::evm_logs::EvmLogs, initialize_database};
-use std::error::Error;
+use service::process_logs;
+use std::{env, error::Error};
+use tokio::time::{sleep, Duration};
 
 mod contracts;
 mod error;
+mod service;
 mod utils;
+
+mod defaults {
+    pub const POLL_INTERVAL: &str = "10";
+    pub const BATCH_SIZE: &str = "25";
+}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    let contract_registry = ContractRegistry::new()?;
-
     let db_pool = initialize_database().await?;
-    let unprocessed_logs = EvmLogs::find_all(&db_pool).await?;
+    let poll_interval = env::var("POLL_INTERVAL")
+        .or::<String>(Ok(defaults::POLL_INTERVAL.into()))?
+        .parse::<u64>()?;
 
-    for log in unprocessed_logs {
-        let processor = contract_registry.get_processor(log.address);
-        match processor {
-            Ok(processor_handle) => {
-                if let Err(error) = processor_handle.process(log).await {
-                    eprintln!("{}", error);
+    let sleep_duration = Duration::from_secs(poll_interval);
+
+    loop {
+        let unprocessed_count = match EvmLogs::count(&db_pool).await {
+            Ok(count) => count,
+            Err(err) => {
+                eprintln!(
+                    "Error counting unprocessed logs: {err}. Sleeping for {} seconds...",
+                    sleep_duration.as_secs()
+                );
+
+                sleep(sleep_duration).await;
+                continue;
+            }
+        };
+
+        match unprocessed_count {
+            Some(count) => {
+                println!("Found {count} unprocessed logs. Starting processing...",);
+
+                if let Err(err) = process_logs(&db_pool).await {
+                    eprintln!("Error processing logs: {err}");
                 }
             }
-            Err(error) => eprintln!("{}", error),
+            None => {
+                println!(
+                    "No unprocessed logs found. Sleeping for {} seconds...",
+                    sleep_duration.as_secs()
+                );
+                sleep(sleep_duration).await;
+            }
         }
     }
-
-    Ok(())
 }
