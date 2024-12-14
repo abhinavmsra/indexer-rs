@@ -130,12 +130,40 @@ impl EvmLogs {
             .await
     }
 
-    pub async fn find_all<'c, E>(connection: E) -> Result<Vec<EvmLogs>, sqlx::Error>
+    pub async fn find_all<'c, E>(page_size: i32, connection: E) -> Result<Vec<EvmLogs>, sqlx::Error>
     where
         E: Executor<'c, Database = Postgres>,
     {
-        sqlx::query_as::<_, EvmLogs>("SELECT * FROM evm_logs")
+        sqlx::query_as::<_, EvmLogs>("SELECT * FROM evm_logs LIMIT $1")
+            .bind(page_size)
             .fetch_all(connection)
             .await
+    }
+
+    pub async fn delete<'c, E>(id: i32, connection: E) -> Result<(), sqlx::Error>
+    where
+        E: Executor<'c, Database = Postgres>,
+    {
+        sqlx::query("DELETE FROM evm_logs WHERE id = $1")
+            .bind(id)
+            .execute(connection)
+            .await?;
+
+        Ok(())
+    }
+
+    pub async fn count<'c, E>(connection: E) -> Result<Option<i64>, sqlx::Error>
+    where
+        E: Executor<'c, Database = Postgres>,
+    {
+        let count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM evm_logs")
+            .fetch_one(connection)
+            .await?;
+
+        if count == 0 {
+            return Ok(None);
+        }
+
+        Ok(Some(count))
     }
 }

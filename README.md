@@ -154,6 +154,8 @@ The project follows a modular, event-driven architecture designed for scalabilit
 |---------------------|-------------------------------------------|--------------------------------------------------------|-----------|
 | ARTIFACTS_BASE_PATH | Directory path for contract ABI files     | `processor/artifacts/abi`                              | Yes       |
 | CONTRACTS          | Contract name and address mapping         | `uniswap_v3_factory:4752ba5DBc23f44D87826276BF6Fd6b1C372aD24` | Yes       |
+| POLL_INTERVAL          | Sleep duration before checking new logs to process          | `10` | No       |
+| BATCH_SIZE          | How many logs to process at once          | `25` | No       |
 
 ### Notes:
 - Multiple contract addresses can be specified as comma-separated values

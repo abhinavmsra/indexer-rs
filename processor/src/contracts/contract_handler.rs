@@ -42,17 +42,32 @@ pub trait ContractHandler {
         }
     }
 
-    async fn process(&self, unprocessed_log: EvmLogs) -> Result<(), AppError> {
-        let event_name = self.event_signature_to_name(unprocessed_log.event_signature)?;
-        let log: Log = unprocessed_log.try_into()?;
-        self.handle_event(&event_name, &log).await?;
-
-        Ok(())
+    fn process(
+        &self,
+        unprocessed_log: EvmLogs,
+    ) -> impl std::future::Future<Output = Result<(), AppError>> + Send
+    where
+        Self: Sync,
+    {
+        async {
+            let event_name = self.event_signature_to_name(unprocessed_log.event_signature)?;
+            let log: Log = unprocessed_log.try_into()?;
+            self.handle_event(&event_name, &log).await?;
+            Ok(())
+        }
     }
 
     fn new(address: &str) -> Result<Self, AppError>
     where
         Self: Sized;
-    async fn handle_event(&self, event: &str, log: &Log) -> Result<(), AppError>;
+
+    fn handle_event(
+        &self,
+        event: &str,
+        log: &Log,
+    ) -> impl std::future::Future<Output = Result<(), AppError>> + Send
+    where
+        Self: Sync;
+
     fn abi(&self) -> &JsonAbi;
 }
