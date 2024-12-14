@@ -1,3 +1,18 @@
+## 0.0.10 (2024-12-14)
+
+### 🩹 Fixes
+
+- continuosly loop over all logs to process ([d2974b8](https://github.com/abhinavmsra/indexer-rs/commit/d2974b8))
+
+### 📖 Documentation
+
+- add details on how to run migrations ([1f826f2](https://github.com/abhinavmsra/indexer-rs/commit/1f826f2))
+- create comprehensive project documentation ([51638dd](https://github.com/abhinavmsra/indexer-rs/commit/51638dd))
+
+### ❤️ Thank You
+
+- Abhinav Mishra @abhinavmsra
+
 ## 0.0.9 (2024-12-13)
 
 ### 🩹 Fixes
