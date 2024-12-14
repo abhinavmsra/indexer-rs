@@ -208,6 +208,44 @@ This option provides a fully configured development environment with IDE integra
    # Select "Dev Containers: Reopen in Container"
    ```
 
+## Database Migrations
+
+Before running the application, you need to set up the database schema by running migrations.
+
+### Running Migrations
+
+1. **Navigate to the database library**
+   ```bash
+   cd libs/indexer-db
+   ```
+
+2. **Run migrations**
+   ```bash
+   sqlx migrate run
+   ```
+
+### Verify Migration Status
+
+```bash
+# Check current migration status
+sqlx migrate info
+```
+
+### Common Migration Tasks
+
+```bash
+# Create a new migration
+sqlx migrate add <migration_name>
+
+# Revert last migration
+sqlx migrate revert
+
+# Reset database (revert all migrations)
+sqlx migrate revert --all
+```
+
+After successful migration, you can proceed with running the application components.
+
 ## Running the Applications
 
 Since this is a workspace project with multiple components, you'll need to specify which component to run.
